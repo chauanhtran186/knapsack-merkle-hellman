@@ -92,9 +92,15 @@ def make_public_key(W: Sequence[int], q: int, r: int):
 # Mã hoá / giải mã một khối bit
 # --------------------------------------------------------------------------
 def encrypt_block(bits: Sequence[int], pub: PublicKey) -> int:
-    """C = sum(xi * bi) cho khối bit x = (x1..xn)."""
+    """Mã hóa một khối bit; mỗi bit phải là số nguyên 0 hoặc 1."""
+
     if len(bits) != pub.n:
         raise ValueError("độ dài khối bit phải bằng n")
+
+    if any(type(bit) is not int or bit not in (0, 1) for bit in bits):
+        raise ValueError("Các bit đầu vào chỉ được phép là số nguyên 0 hoặc 1")
+    if any(type(bit) is not int or bit not in (0, 1) for bit in bits):
+        raise ValueError("Các bit đầu vào chỉ được phép là số nguyên 0 hoặc 1")
     return sum(b for x, b in zip(bits, pub.B) if x)
 
 
