@@ -106,8 +106,49 @@ def case_wrong_key_rejected():
     except ValueError:
         return "không giải ra bản rõ", "không giải ra bản rõ"
 
+def case_invalid_bits_rejected():
+    """Bit không hợp lệ phải bị từ chối."""
 
-CASES = [
+    pub, _ = generate_keys(8)
+
+    invalid_inputs = [
+        [2] + [0] * 7,
+        [-1] + [0] * 7,
+        [0.5] + [0] * 7,
+        [True] + [0] * 7,
+    ]
+
+    rejected = 0
+
+    for bits in invalid_inputs:
+        try:
+            encrypt_block(bits, pub)
+        except ValueError:
+            rejected += 1
+
+    return len(invalid_inputs), rejected
+def case_valid_bits_accepted():
+    """Các khối bit hợp lệ vẫn phải được mã hóa."""
+
+    pub, _ = generate_keys(8)
+
+    valid_inputs = [
+        [0] * 8,
+        [1] * 8,
+        [0, 1, 0, 1, 0, 1, 0, 1],
+    ]
+
+    accepted = 0
+
+    for bits in valid_inputs:
+        try:
+            encrypt_block(bits, pub)
+            accepted += 1
+        except ValueError:
+            pass
+
+    return len(valid_inputs), accepted
+CASES = [    
     ("Khứ hồi: đúng 1 khối", case_roundtrip_exact_block),
     ("Khứ hồi: cần đệm", case_roundtrip_needs_padding),
     ("Khứ hồi: tiếng Việt UTF-8 (n=128)", case_roundtrip_vietnamese_utf8),
@@ -118,6 +159,8 @@ CASES = [
     ("Đối chiếu vét cạn n=8", case_ref_bruteforce_small_n),
     ("Tham số cố định tính tay", case_fixed_parameters),
     ("Sai khoá không giải ra bản rõ", case_wrong_key_rejected),
+    ("Từ chối bit đầu vào không hợp lệ", case_invalid_bits_rejected),
+    ("Chấp nhận bit đầu vào hợp lệ", case_valid_bits_accepted),
 ]
 
 
